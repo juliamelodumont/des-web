@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Compras</title>
+  <style>
+
+    :root {
+      --roxo:    #5c4ef5;
+      --roxo2:   #4338ca;
+      --rosa:    #f472b6;
+      --bg:      #f7f7fb;
+      --card:    #ffffff;
+      --borda:   #e5e7eb;
+      --texto:   #18181b;
+      --muted:   #71717a;
+      --verde:   #16a34a;
+      --vermelho:#dc2626;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--texto);
+      min-height: 100dvh;
+      padding: clamp(14px, 4vw, 44px);
+    }
+
+    /* cabeçalho */
+    header {
+      background: linear-gradient(135deg, var(--roxo), #818cf8);
+      color: #fff;
+      border-radius: 18px;
+      padding: 26px 30px;
+      margin-bottom: 26px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .logo {
+      font-size: 2rem;
+      background: rgba(255,255,255,.18);
+      border-radius: 12px;
+      width: 52px; height: 52px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    header h1 { font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight: 700; }
+    header p  { font-size: 0.82rem; opacity: .7; margin-top: 3px; }
+
+    /* grid 2 colunas */
+    .layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: clamp(14px, 2.5vw, 26px);
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 1px 10px rgba(0,0,0,.07);
+      padding: clamp(16px, 3vw, 26px);
+    }
+
+    .card-titulo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--roxo);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-titulo::before {
+      content: '';
+      display: block;
+      width: 4px; height: 18px;
+      background: var(--rosa);
+      border-radius: 4px;
+    }
+
+    /* stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: #f4f4f8;
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .stat .num {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--roxo);
+      line-height: 1;
+    }
+    .stat.ok .num { color: var(--verde); }
+    .stat .leg {
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    /* barra de progresso */
+    .prog-wrap { margin-bottom: 18px; }
+    .prog-topo {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+    .prog-topo strong { color: var(--texto); }
+
+    .trilha {
+      height: 12px;
+      background: #e9e9f0;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .barra {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--roxo), var(--rosa));
+      border-radius: 99px;
+      transition: width .5s ease, background .4s;
+    }
+    .barra.feito { background: linear-gradient(90deg, #16a34a, #4ade80); }
+
+    /* formulário */
+    .form-add {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .form-add input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 2px solid var(--borda);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-add input:focus { border-color: var(--roxo); }
+
+    .btn-add {
+      background: var(--roxo);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity .15s, transform .1s;
+    }
+    .btn-add:hover  { opacity: .88; }
+    .btn-add:active { transform: scale(.97); }
+
+    /* filtros */
+    .filtros {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .f {
+      padding: 4px 14px;
+      border: 1.5px solid var(--borda);
+      border-radius: 99px;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all .15s;
+    }
+    .f.on {
+      background: var(--roxo);
+      border-color: var(--roxo);
+      color: #fff;
+    }
+
+    /* lista */
+    .lista {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 2px;
+      scrollbar-width: thin;
+    }
+
+    .vazia {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 32px 0;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1.5px solid var(--borda);
+      border-radius: 8px;
+      background: #fcfcfd;
+      transition: background .2s, border-color .2s;
+    }
+    .item:hover { border-color: #c4b5fd; }
+    .item.check { background: #f0fdf4; border-color: #bbf7d0; }
+
+    .item input[type="checkbox"] {
+      width: 17px; height: 17px;
+      accent-color: var(--verde);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .item label {
+      flex: 1;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .item.check label {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .btn-del {
+      background: transparent;
+      border: 1.5px solid var(--borda);
+      color: var(--muted);
+      border-radius: 6px;
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .btn-del:hover { border-color: var(--vermelho); color: var(--vermelho); background: #fff5f5; }
+
+    .btn-clear {
+      width: 100%;
+      margin-top: 12px;
+      padding: 8px;
+      background: transparent;
+      border: 1.5px solid var(--borda);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .btn-clear:hover { background: #f5f5f7; }
+
+    /* resumo de pendentes */
+    .pendentes-lista {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    .p-item {
+      font-size: 0.83rem;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #f4f4f8;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .p-item::before { content: '·'; color: var(--rosa); font-size: 1.2rem; }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 26px;
+      left: 50%;
+      transform: translateX(-50%) translateY(70px);
+      background: var(--roxo2);
+      color: #fff;
+      padding: 9px 22px;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .3s ease, opacity .3s ease;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">🛒</div>
+    <div>
+      <h1>Lista de Compras</h1>
+      <p>Seus itens salvos mesmo depois de fechar o navegador</p>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- painel principal -->
+    <section class="card">
+      <p class="card-titulo">Minha lista</p>
+
+      <div class="prog-wrap">
+        <div class="prog-topo">
+          <span>Progresso</span>
+          <strong id="label-prog">0 de 0 itens</strong>
+        </div>
+        <div class="trilha">
+          <div class="barra" id="barra"></div>
+        </div>
+      </div>
+
+      <form class="form-add" id="form" novalidate>
+        <input
+          type="text"
+          id="campo"
+          placeholder="Ex: Arroz, Feijão, Leite..."
+          autocomplete="off"
+          maxlength="60"
+          aria-label="Nome do item"
+          required
+        >
+        <button type="submit" class="btn-add">+ Adicionar</button>
+      </form>
+
+      <div class="filtros" role="group" aria-label="Filtrar itens">
+        <button class="f on" data-f="todos">Todos</button>
+        <button class="f"    data-f="pendentes">Pendentes</button>
+        <button class="f"    data-f="comprados">Comprados</button>
+      </div>
+
+      <ul class="lista" id="lista" aria-live="polite">
+        <li class="vazia" id="vazia">Nenhum item ainda. Adicione algo acima!</li>
+      </ul>
+
+      <button class="btn-clear" id="btn-limpar">Limpar tudo</button>
+    </section>
+
+    <!-- painel resumo -->
+    <section class="card">
+      <p class="card-titulo">Resumo</p>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="num" id="s-total">0</span>
+          <span class="leg">Total</span>
+        </div>
+        <div class="stat">
+          <span class="num" id="s-pend">0</span>
+          <span class="leg">Faltam</span>
+        </div>
+        <div class="stat ok">
+          <span class="num" id="s-comp">0</span>
+          <span class="leg">Prontos</span>
+        </div>
+      </div>
+
+      <p class="card-titulo" style="margin-top:4px">Ainda falta comprar</p>
+      <ul class="pendentes-lista" id="lista-pend"></ul>
+
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+
+    // referências do DOM
+    const form      = document.querySelector('#form');
+    const campo     = document.querySelector('#campo');
+    const lista     = document.querySelector('#lista');
+    const vazia     = document.querySelector('#vazia');
+    const barra     = document.querySelector('#barra');
+    const labelProg = document.querySelector('#label-prog');
+    const btnLimpar = document.querySelector('#btn-limpar');
+    const listaPend = document.querySelector('#lista-pend');
+    const sTotal    = document.querySelector('#s-total');
+    const sPend     = document.querySelector('#s-pend');
+    const sComp     = document.querySelector('#s-comp');
+    const toastEl   = document.querySelector('#toast');
+
+    // estado
+    const CHAVE = 'lista_compras';
+    let itens  = JSON.parse(localStorage.getItem(CHAVE) || '[]');
+    let filtro = 'todos';
+
+    function salvar() {
+      localStorage.setItem(CHAVE, JSON.stringify(itens));
+    }
+
+    // atualiza barra, stats e painel de pendentes
+    function atualizarStats() {
+      const total  = itens.length;
+      const feitos = itens.filter(i => i.ok).length;
+      const pct    = total ? Math.round((feitos / total) * 100) : 0;
+
+      barra.style.width = pct + '%';
+      barra.classList.toggle('feito', pct === 100 && total > 0);
+      labelProg.textContent = `${feitos} de ${total} ${total === 1 ? 'item' : 'itens'}`;
+
+      sTotal.textContent = total;
+      sPend.textContent  = total - feitos;
+      sComp.textContent  = feitos;
+
+      // lista de pendentes no resumo
+      listaPend.innerHTML = '';
+      const pendentes = itens.filter(i => !i.ok);
+      if (pendentes.length === 0) {
+        listaPend.innerHTML = '<li class="p-item" style="color:#16a34a">Tudo comprado! 🎉</li>';
+      } else {
+        pendentes.forEach(i => {
+          const li = document.createElement('li');
+          li.className   = 'p-item';
+          li.textContent = i.nome;
+          listaPend.appendChild(li);
+        });
+      }
+    }
+
+    // renderiza lista principal
+    function render() {
+      lista.querySelectorAll('.item').forEach(el => el.remove());
+
+      const visíveis = itens.filter(i => {
+        if (filtro === 'pendentes') return !i.ok;
+        if (filtro === 'comprados') return  i.ok;
+        return true;
+      });
+
+      vazia.style.display = visíveis.length === 0 ? 'block' : 'none';
+
+      visíveis.forEach(item => {
+        const li  = document.createElement('li');
+        li.className  = 'item' + (item.ok ? ' check' : '');
+        li.dataset.id = item.id;
+
+        const chk   = document.createElement('input');
+        chk.type    = 'checkbox';
+        chk.checked = item.ok;
+        chk.id      = 'c' + item.id;
+
+        const lbl         = document.createElement('label');
+        lbl.htmlFor       = 'c' + item.id;
+        lbl.textContent   = item.nome;
+
+        const del         = document.createElement('button');
+        del.className     = 'btn-del';
+        del.textContent   = 'remover';
+
+        li.append(chk, lbl, del);
+        lista.appendChild(li);
+      });
+
+      atualizarStats();
+    }
+
+    render();
+
+    // adicionar
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const nome = campo.value.trim();
+      if (!nome) { campo.focus(); return; }
+
+      itens.push({ id: Date.now(), nome, ok: false });
+      salvar();
+      render();
+      toast(`"${nome}" adicionado!`);
+      campo.value = '';
+      campo.focus();
+    });
+
+    // marcar como comprado — delegação no <ul>
+    lista.addEventListener('change', e => {
+      if (e.target.type !== 'checkbox') return;
+
+      const id   = Number(e.target.closest('.item').dataset.id);
+      const item = itens.find(i => i.id === id);
+      if (!item) return;
+
+      item.ok = e.target.checked;
+      salvar();
+      render();
+      if (item.ok) toast(`"${item.nome}" comprado ✓`);
+    });
+
+    // remover — delegação no <ul>
+    lista.addEventListener('click', e => {
+      if (!e.target.classList.contains('btn-del')) return;
+
+      const id   = Number(e.target.closest('.item').dataset.id);
+      const item = itens.find(i => i.id === id);
+      itens = itens.filter(i => i.id !== id);
+      salvar();
+      render();
+      toast(`"${item?.nome}" removido`);
+    });
+
+    // limpar tudo
+    btnLimpar.addEventListener('click', () => {
+      if (!itens.length) return;
+      if (!confirm('Apagar todos os itens?')) return;
+      itens = [];
+      salvar();
+      render();
+      toast('Lista limpa!');
+    });
+
+    // filtros
+    document.querySelectorAll('.f').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.f').forEach(b => b.classList.remove('on'));
+        this.classList.add('on');
+        filtro = this.dataset.f;
+        render();
+      });
+    });
+
+    // toast
+    let timer;
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(timer);
+      timer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+    }
+
+  </script>
+</body>
+</html>

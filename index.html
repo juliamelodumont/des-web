@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meus Projetos — Julia Dumont</title>
+  <style>
+    :root {
+      --roxo: #5c4ef5;
+      --verde: #16a34a;
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --borda: #e5e7eb;
+      --texto: #18181b;
+      --muted: #71717a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--texto);
+      min-height: 100dvh;
+      padding: clamp(16px, 4vw, 48px);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--roxo), #818cf8);
+      color: #fff;
+      border-radius: 18px;
+      padding: 30px 36px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .avatar {
+      width: 58px; height: 58px;
+      background: rgba(255,255,255,.2);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    header h1 { font-size: clamp(1.2rem, 3vw, 1.7rem); font-weight: 700; }
+    header p  { font-size: 0.85rem; opacity: .72; margin-top: 4px; }
+
+    .secao-titulo {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      margin-bottom: 14px;
+      padding-left: 4px;
+    }
+
+    .grade {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1.5px solid var(--borda);
+      border-radius: 14px;
+      padding: 20px 22px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+    }
+
+    .card:hover {
+      border-color: var(--roxo);
+      box-shadow: 0 4px 20px rgba(92,78,245,.12);
+      transform: translateY(-2px);
+    }
+
+    .card-icone {
+      font-size: 1.6rem;
+      width: 46px; height: 46px;
+      background: #f3f0ff;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .card-info { flex: 1; }
+    .card-info h2 { font-size: 0.95rem; font-weight: 600; margin-bottom: 3px; }
+    .card-info p  { font-size: 0.78rem; color: var(--muted); }
+
+    .check {
+      width: 26px; height: 26px;
+      background: var(--verde);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      color: #fff;
+      font-size: 0.85rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="avatar">👩‍💻</div>
+    <div>
+      <h1>Julia Dumont</h1>
+      <p>Desenvolvimento Web · Ibmec BH · 2026.1</p>
+    </div>
+  </header>
+
+  <p class="secao-titulo">HTML &amp; CSS</p>
+  <div class="grade">
+
+    <a class="card" href="lab1.html">
+      <div class="card-icone">📝</div>
+      <div class="card-info">
+        <h2>Lab 1 — Texto, Listas &amp; Links</h2>
+        <p>Semântica HTML · ul, ol, dl · blockquote</p>
+      </div>
+      <div class="check">✓</div>
+    </a>
+
+    <a class="card" href="perfil.html">
+      <div class="card-icone">🪪</div>
+      <div class="card-info">
+        <h2>Perfil Técnico</h2>
+        <p>HTML semântico · tabela · figure · nav</p>
+      </div>
+      <div class="check">✓</div>
+    </a>
+
+    <a class="card" href="livraria-ibmec/index.html">
+      <div class="card-icone">📚</div>
+      <div class="card-info">
+        <h2>Livraria Ibmec</h2>
+        <p>CSS Grid · grid-template-areas · responsivo</p>
+      </div>
+      <div class="check">✓</div>
+    </a>
+
+  </div>
+
+  <p class="secao-titulo">Formulários</p>
+  <div class="grade">
+
+    <a class="card" href="lab07-checkpoint/index.html">
+      <div class="card-icone">🎓</div>
+      <div class="card-info">
+        <h2>Cadastro de Aluno</h2>
+        <p>Formulário · fieldset · validação nativa</p>
+      </div>
+      <div class="check">✓</div>
+    </a>
+
+    <a class="card" href="formulario/index.html">
+      <div class="card-icone">✉️</div>
+      <div class="card-info">
+        <h2>Formulário de Contato</h2>
+        <p>CSS externo · aria-live · modo escuro</p>
+      </div>
+      <div class="check">✓</div>
+    </a>
+
+  </div>
+
+  <p class="secao-titulo">JavaScript</p>
+  <div class="grade">
+
+    <a class="card" href="lista-compras/lista-compras.html">
+      <div class="card-icone">🛒</div>
+      <div class="card-info">
+        <h2>Lista de Compras</h2>
+        <p>querySelector · localStorage · CSS Grid · Toast</p>
+      </div>
+      <div class="check">✓</div>
+    </a>
+
+  </div>
+
+  <p class="secao-titulo">Python</p>
+  <div class="grade">
+
+    <a class="card" href="lab09/relatorio.json" target="_blank">
+      <div class="card-icone">🐍</div>
+      <div class="card-info">
+        <h2>Analisador de Notas</h2>
+        <p>Python · JSON · tratamento de exceções</p>
+      </div>
+      <div class="check">✓</div>
+    </a>
+
+  </div>
+
+  <footer>Julia Dumont · Ibmec BH · 2026.1</footer>
+
+</body>
+</html>

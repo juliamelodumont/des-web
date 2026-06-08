@@ -1,0 +1,41 @@
+{
+  "alunos": [
+    {
+      "nome": "Ana Paula",
+      "nota": 8.5,
+      "status": "Aprovado"
+    },
+    {
+      "nome": "Bruno Martins",
+      "nota": 6.0,
+      "status": "Recuperação"
+    },
+    {
+      "nome": "Carla Souza",
+      "nota": 9.5,
+      "status": "Aprovado"
+    },
+    {
+      "nome": "Diego Lima",
+      "nota": 4.0,
+      "status": "Reprovado"
+    },
+    {
+      "nome": "Eduardo Nunes",
+      "nota": 7.0,
+      "status": "Aprovado"
+    },
+    {
+      "nome": "Fernanda Costa",
+      "nota": 5.5,
+      "status": "Recuperação"
+    }
+  ],
+  "estatisticas": {
+    "maior": 9.5,
+    "media": 6.75,
+    "menor": 4.0,
+    "total": 6
+  },
+  "turma": "2026.1"
+}
