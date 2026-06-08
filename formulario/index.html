@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Contato</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- Cabeçalho -->
+    <div class="card-header">
+      <div class="icone" aria-hidden="true">✉️</div>
+      <h1>Fale conosco</h1>
+      <p>Preencha o formulário e responderemos em até 24 horas.</p>
+    </div>
+
+    <!-- Corpo -->
+    <div class="card-body">
+
+      <p class="legenda-obrigatorio"><span aria-hidden="true">*</span> Campos obrigatórios</p>
+
+      <form id="form-contato">
+
+        <!-- Nome e E-mail lado a lado -->
+        <div class="grid-2">
+
+          <div class="campo">
+            <label for="nome">Nome completo <span class="obrigatorio" aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              required
+              autocomplete="name"
+              placeholder="Ex: Julia Dumont"
+              aria-required="true"
+              aria-describedby="erro-nome"
+            >
+            <span id="erro-nome" class="mensagem-erro" role="alert">&#9888; Informe seu nome completo.</span>
+          </div>
+
+          <div class="campo">
+            <label for="email">E-mail <span class="obrigatorio" aria-hidden="true">*</span></label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              autocomplete="email"
+              placeholder="Ex: julia@email.com"
+              aria-required="true"
+              aria-describedby="erro-email"
+            >
+            <span id="erro-email" class="mensagem-erro" role="alert">&#9888; Informe um e-mail válido.</span>
+          </div>
+
+        </div>
+
+        <!-- Assunto -->
+        <div class="campo">
+          <label for="assunto">Assunto <span class="obrigatorio" aria-hidden="true">*</span></label>
+          <select id="assunto" name="assunto" required aria-required="true">
+            <option value="">Selecione um assunto</option>
+            <optgroup label="Suporte">
+              <option value="bug">Reportar bug</option>
+              <option value="conta">Problema na conta</option>
+              <option value="acesso">Problema de acesso</option>
+            </optgroup>
+            <optgroup label="Comercial">
+              <option value="planos">Informações sobre planos</option>
+              <option value="parceria">Proposta de parceria</option>
+            </optgroup>
+            <optgroup label="Outros">
+              <option value="feedback">Feedback geral</option>
+              <option value="outro">Outro assunto</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Mensagem -->
+        <div class="campo">
+          <label for="mensagem">Mensagem <span class="obrigatorio" aria-hidden="true">*</span></label>
+          <textarea
+            id="mensagem"
+            name="mensagem"
+            required
+            minlength="20"
+            maxlength="500"
+            placeholder="Descreva sua dúvida ou mensagem (mín. 20 caracteres)..."
+            aria-required="true"
+            aria-describedby="contador-msg erro-mensagem"
+          ></textarea>
+          <span id="contador-msg" class="contador">0 / 500 caracteres</span>
+          <span id="erro-mensagem" class="mensagem-erro" role="alert">&#9888; A mensagem deve ter ao menos 20 caracteres.</span>
+        </div>
+
+        <!-- Anexo -->
+        <div class="campo">
+          <label for="anexo">Anexo <span style="font-weight:400;color:#94a3b8">(opcional)</span></label>
+          <input
+            type="file"
+            id="anexo"
+            name="anexo"
+            accept=".pdf,.jpg,.jpeg,.png,.webp"
+            aria-describedby="dica-anexo"
+          >
+          <span id="dica-anexo" class="dica">Formatos aceitos: PDF, JPG, PNG, WEBP</span>
+        </div>
+
+        <hr class="divisor">
+
+        <!-- Aceite -->
+        <div class="campo" style="flex-direction:row;align-items:center;gap:10px;margin-bottom:24px">
+          <input type="checkbox" id="termos" name="termos" required aria-required="true" style="width:17px;height:17px;accent-color:#6366f1;cursor:pointer;flex-shrink:0">
+          <label for="termos" style="font-weight:400;font-size:0.85rem;cursor:pointer;margin:0">
+            Li e aceito os <a href="#" style="color:#6366f1;font-weight:600">termos de uso</a> e a <a href="#" style="color:#6366f1;font-weight:600">política de privacidade</a> <span class="obrigatorio" aria-hidden="true">*</span>
+          </label>
+        </div>
+
+        <!-- Botões -->
+        <div class="botoes">
+          <button type="submit" id="btn-enviar" disabled>Enviar mensagem</button>
+          <button type="reset">Limpar</button>
+        </div>
+
+        <!-- Feedback aria-live -->
+        <div id="feedback" aria-live="polite" aria-atomic="true"></div>
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('form-contato');
+    const btnEnviar = document.getElementById('btn-enviar');
+    const textarea = document.getElementById('mensagem');
+    const contador = document.getElementById('contador-msg');
+    const feedback = document.getElementById('feedback');
+    const obrigatorios = form.querySelectorAll('[required]');
+
+    textarea.addEventListener('input', () => {
+      const total = textarea.value.length;
+      contador.textContent = `${total} / 500 caracteres`;
+      contador.className = 'contador' + (total >= 450 ? ' quase' : '') + (total >= 490 ? ' limite' : '');
+    });
+
+    function verificarCampos() {
+      btnEnviar.disabled = ![...obrigatorios].every(c => c.validity.valid);
+    }
+
+    obrigatorios.forEach(c => c.addEventListener('input', verificarCampos));
+    obrigatorios.forEach(c => c.addEventListener('change', verificarCampos));
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      feedback.className = 'sucesso';
+      feedback.textContent = '✓ Mensagem enviada com sucesso! Retornaremos em breve.';
+      form.reset();
+      contador.textContent = '0 / 500 caracteres';
+      contador.className = 'contador';
+      btnEnviar.disabled = true;
+    });
+
+    form.addEventListener('reset', () => {
+      setTimeout(() => { feedback.className = ''; feedback.textContent = ''; }, 0);
+    });
+  </script>
+
+</body>
+</html>
